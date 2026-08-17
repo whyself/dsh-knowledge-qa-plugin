@@ -6,6 +6,8 @@
 
 面向 NOVA 资料库的独立 [DeepSeek Harness](https://github.com/deepseek-harness/deepseek-harness) Profile Bundle。它不修改 DSH 源码，安装后把原生 Web 固定为一个资料目录、一个 `nova-qa` Preset 和只读权限，同时保留原生 Session、对话历史、模型选择和 Web RPC。
 
+本仓库以 `dsh-plugin` Topic 标记为 DeepSeek Harness 插件。
+
 ## 功能
 
 - 唯一 Workspace 显示为 `NOVA知识库`，启动时由 `DSH_QA_WORKSPACE` 指定资料目录。
