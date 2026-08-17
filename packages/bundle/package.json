@@ -2,6 +2,14 @@
   "name": "dsh-knowledge-qa-bundle",
   "version": "0.1.0",
   "description": "DSH product bundle for a fixed-workspace knowledge QA agent",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "knowledge-base",
+    "knowledge-qa",
+    "nova"
+  ],
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

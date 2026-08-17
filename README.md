@@ -2,6 +2,7 @@
 
 [![Release](https://img.shields.io/github/v/release/whyself/dsh-knowledge-qa-plugin)](https://github.com/whyself/dsh-knowledge-qa-plugin/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![DSH Plugin](https://img.shields.io/badge/DSH-plugin-5b5bd6.svg)](https://github.com/topics/dsh-plugin)
 
 面向 NOVA 资料库的独立 [DeepSeek Harness](https://github.com/deepseek-harness/deepseek-harness) Profile Bundle。它不修改 DSH 源码，安装后把原生 Web 固定为一个资料目录、一个 `nova-qa` Preset 和只读权限，同时保留原生 Session、对话历史、模型选择和 Web RPC。
 
