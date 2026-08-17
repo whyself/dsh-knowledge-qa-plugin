@@ -1,0 +1,3 @@
+name: 知识问答模式
+description: 在固定资料目录中使用 glob、grep 与 read 查证后回答，不提供写文件、Shell、网页或委派能力。
+order: 5

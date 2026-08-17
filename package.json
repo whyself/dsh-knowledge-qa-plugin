@@ -1,0 +1,12 @@
+{
+  "name": "dsh-knowledge-qa-plugin-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter dsh-knowledge-qa-bundle build",
+    "release:verify": "node scripts/verify-release.mjs",
+    "test": "pnpm -r --if-present test",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "packageManager": "pnpm@11.7.0"
+}

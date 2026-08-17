@@ -1,0 +1,14 @@
+# Fix the product's only Agent composition. The Bundle disables the native
+# Preset picker; this Profile replaces its generic QA default with NOVA.
+- id: qa-agent-presets
+  config:
+    default: nova-qa
+    roots:
+      - path: !!js ctx.qaWorkspace.presetRoot
+        trust: system
+    includeUserRoot: false
+
+- id: qa-workspace
+  config:
+    root: !!js process.env.DSH_QA_WORKSPACE
+    title: NOVA知识库

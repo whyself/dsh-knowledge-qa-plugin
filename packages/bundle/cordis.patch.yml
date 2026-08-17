@@ -1,0 +1,71 @@
+# Dedicated QA layer over dsh-base + dsh-web-app. The Profile must set
+# DSH_QA_WORKSPACE before boot.
+
+- insert:
+    - id: qa-workspace
+      name: dsh-knowledge-qa-bundle
+      config:
+        root: !!js process.env.DSH_QA_WORKSPACE
+        title: NOVA知识库
+
+# Keep provider-relative resolution and the sandbox policy aligned with the
+# deployment Workspace. The QA Preset independently owns the model-tool root.
+- id: fs-sandbox
+  config:
+    cwd: !!js process.env.DSH_QA_WORKSPACE
+
+- id: sandbox-policy
+  config:
+    mode: read-only
+    workspaceRoot: !!js process.env.DSH_QA_WORKSPACE
+
+# Replace the base permission table with the only mode this product permits.
+# The command path cannot widen access even when invoked outside the QA UI.
+- id: permission
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+    defaultPreset: read-only
+
+# Web disables model-facing filesystem tools globally. Restore only the
+# shipped read/search suites required by the fixed QA Preset.
+- id: tool-fs
+  disabled: false
+
+- id: tool-fs-search
+  disabled: false
+  config:
+    sampleOverCapGlobResults: false
+
+# The product launcher owns the native `agent-presets` row's roots, so keep it
+# disabled and mount this Bundle's fixed roster under a different row id. The
+# provider service resolves the package-relative directory in both source and
+# built layouts; Loader injection makes it available before config evaluation.
+- id: agent-presets
+  disabled: true
+
+- insert:
+    - id: qa-agent-presets
+      name: '@deepseek-ai/dsh-agent-presets'
+      inject: [qaWorkspace]
+      config:
+        default: nova-qa
+        roots:
+          - path: !!js ctx.qaWorkspace.presetRoot
+            trust: system
+        includeUserRoot: false
+
+# This product has one Workspace and one Agent composition. Keep the native
+# shells but replace their switchable Workspace and Preset surfaces.
+- id: ui-workspace
+  disabled: true
+
+- id: ui-agent-preset
+  disabled: true
+
+# Read-only QA sessions never produce file deliverables. Disable the native
+# Web deliverables plugin so it does not inject file-output instructions.
+- id: ui-deliverables
+  disabled: true
