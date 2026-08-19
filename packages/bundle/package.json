@@ -1,6 +1,6 @@
 {
   "name": "dsh-knowledge-qa-bundle",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH product bundle for a fixed-workspace knowledge QA agent",
   "keywords": [
     "deepseek-harness",

@@ -14,7 +14,7 @@ Bundle 叠加在原生 `dsh-base` 与 `dsh-web-app` 之后，完成以下配置�
 正式安装：
 
 ```bash
-dsh plugin --profile web add https://github.com/whyself/dsh-knowledge-qa-plugin/releases/download/v0.1.0/dsh-knowledge-qa-bundle-0.1.0.tgz
+dsh plugin --profile web add https://github.com/whyself/dsh-knowledge-qa-plugin/releases/download/v0.1.1/dsh-knowledge-qa-bundle-0.1.1.tgz
 ```
 
 启动前必须设置资料根：

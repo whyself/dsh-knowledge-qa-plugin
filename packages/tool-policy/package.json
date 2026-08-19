@@ -1,7 +1,7 @@
 {
   "name": "dsh-knowledge-qa-tool-policy",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Agent-scoped QA policy over the shipped DSH glob, grep, and read tools",
   "type": "module",
   "main": "dist/index.js",

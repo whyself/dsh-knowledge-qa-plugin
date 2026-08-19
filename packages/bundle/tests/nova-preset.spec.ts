@@ -74,6 +74,8 @@ describe('nova-qa preset', () => {
     expect(prompt).not.toMatch(/\b\d{1,2}:\d{2}\b/)
     expect(prompt).not.toMatch(/https?:\/\//)
     expect(prompt).not.toContain('每轮完整读取')
+    expect(prompt).toContain('reply_to 是被引用的旧消息，不是当前发送者的新发言')
+    expect(prompt).toContain('reply_to.sender_role=assistant 表示该消息是 NovaBot 自己先前的回答')
   })
 
   it('owns the read/search tools, fixed-root policy, and native compaction services', () => {
@@ -104,7 +106,7 @@ describe('nova-qa preset', () => {
   })
 
   it('ships one tagged release archive with package-owned Host, policy, and Client entries', () => {
-    expect(bundleManifest.version).toBe('0.1.0')
+    expect(bundleManifest.version).toBe('0.1.1')
     expect(toolPolicyManifest.version).toBe(bundleManifest.version)
     expect(uiManifest.version).toBe(bundleManifest.version)
     expect(bundleManifest.bundledDependencies).toBeUndefined()

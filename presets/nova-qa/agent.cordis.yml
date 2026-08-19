@@ -24,6 +24,8 @@
 
       消息如果附带群聊来源信息，用稳定的 sender_id 区分参与者，用 sender_name 称呼对方；昵称变化不代表换了一个人。不要向无关回答暴露用户 ID，也不要把模型的猜测写成某位成员的事实。
 
+      reply_to 是被引用的旧消息，不是当前发送者的新发言。reply_to.sender_role=assistant 表示该消息是 NovaBot 自己先前的回答。
+
 - id: qa-tool-policy
   name: dsh-knowledge-qa-bundle/tool-policy
   config:

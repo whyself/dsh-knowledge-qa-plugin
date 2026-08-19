@@ -36,7 +36,7 @@ pnpm add --global @deepseek-ai/dsh@0.1.0-rc.7
 再把已发布的单包 Bundle 加入 `web` Profile：
 
 ```bash
-dsh plugin --profile web add https://github.com/whyself/dsh-knowledge-qa-plugin/releases/download/v0.1.0/dsh-knowledge-qa-bundle-0.1.0.tgz
+dsh plugin --profile web add https://github.com/whyself/dsh-knowledge-qa-plugin/releases/download/v0.1.1/dsh-knowledge-qa-bundle-0.1.1.tgz
 ```
 
 Bundle 自身已经固定 NOVA 默认值，不需要把仓库里的 Preset 或 Profile 文件复制到服务器。
