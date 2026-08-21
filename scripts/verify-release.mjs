@@ -17,8 +17,9 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const releaseDir = join(repoRoot, '.release')
 const bundleDir = join(repoRoot, 'packages', 'bundle')
 const bundleManifest = JSON.parse(readFileSync(join(bundleDir, 'package.json'), 'utf8'))
-const dshVersion = process.env.DSH_RELEASE_TEST_VERSION ?? '0.1.0-rc.7'
+const dshVersion = process.env.DSH_RELEASE_TEST_VERSION ?? '0.1.1-rc.1'
 const maximumArchiveBytes = 16 * 1024 * 1024
+const onePixelPng = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 const pnpmCommand = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm'
 
@@ -212,6 +213,7 @@ async function verifyRegistryDsh(archivePath) {
       'id: qa-workspace',
       'id: qa-agent-presets',
       'default: nova-qa',
+      'model: deepseek-v4-flash-vision-exp',
       'id: ui-deliverables',
       'defaultPreset: read-only',
     ]) {
@@ -264,11 +266,31 @@ async function verifyRegistryDsh(archivePath) {
     if (created.sessionId !== sessionId || created.agentPreset !== 'nova-qa') {
       fail(`session.create did not mount nova-qa: ${JSON.stringify(created)}`)
     }
-    const history = await rpc(baseUrl, 'session.history', { sessionId, maxMessages: 10 })
+    const models = await rpc(baseUrl, 'session.models', { sessionId })
+    if (models.current?.provider !== 'deepseek-official'
+      || models.current?.model !== 'deepseek-v4-flash-vision-exp') {
+      fail(`session.models did not return the NOVA vision default: ${JSON.stringify(models)}`)
+    }
+    const prompted = await rpc(baseUrl, 'session.prompt', {
+      sessionId,
+      mode: 'queue',
+      content: [
+        { type: 'text', text: 'Describe the image.' },
+        { type: 'image', mediaType: 'image/png', data: onePixelPng, name: 'pixel.png' },
+      ],
+    })
+    if (prompted.accepted !== true) fail(`session.prompt did not accept an image: ${JSON.stringify(prompted)}`)
+    const history = await waitForRpc(
+      baseUrl,
+      'session.history',
+      { sessionId, maxMessages: 10 },
+      value => value.events?.some(entry => entry.event?.type === 'user/message'
+        && entry.event.data?.content?.some(block => block.type === 'image')),
+    )
     if (!Array.isArray(history.events)) fail('session.history did not return an event array')
 
     process.stdout.write(`\nVerified ${bundleManifest.name}@${bundleManifest.version} (${recordedSize(archivePath)}) against registry @deepseek-ai/dsh@${dshVersion}.\n`)
-    process.stdout.write(`RPC smoke: Workspace NOVA知识库, Preset nova-qa, Session ${sessionId}.\n`)
+    process.stdout.write(`RPC smoke: Workspace NOVA知识库, Preset nova-qa, Vision model, durable image, Session ${sessionId}.\n`)
   } catch (error) {
     const output = serverOutput()
     if (output === '') throw error

@@ -8,6 +8,14 @@
         root: !!js process.env.DSH_QA_WORKSPACE
         title: NOVA知识库
 
+# New Sessions use the image-capable direct DeepSeek route. Model selection is
+# Session state in DSH, so existing Sessions retain their logged choice until a
+# client selects this model; the AstrBot adapter does that for routed QQ Sessions.
+- id: agent-default-model
+  config:
+    provider: deepseek-official
+    model: deepseek-v4-flash-vision-exp
+
 # Keep provider-relative resolution and the sandbox policy aligned with the
 # deployment Workspace. The QA Preset independently owns the model-tool root.
 - id: fs-sandbox

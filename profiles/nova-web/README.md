@@ -1,6 +1,6 @@
 # NOVA Web Profile
 
-该 Profile 组合原生 `@deepseek-ai/dsh-base`、`@deepseek-ai/dsh-web-app` 与 `dsh-knowledge-qa-bundle`，形成一个固定的 NOVA 问答产品。Bundle 注册唯一 Workspace 并替换可切换的 Workspace/Preset 表面，Profile 把通用默认模式覆盖为 `nova-qa`，同时把 Workspace 显示名配置为“NOVA知识库”。
+该 Profile 组合原生 `@deepseek-ai/dsh-base`、`@deepseek-ai/dsh-web-app` 与 `dsh-knowledge-qa-bundle`，形成一个固定的 NOVA 问答产品。Bundle 注册唯一 Workspace、把新 Session 的模型默认值设为 `deepseek-v4-flash-vision-exp`，并替换可切换的 Workspace/Preset 表面；Profile 把通用默认模式覆盖为 `nova-qa`，同时把 Workspace 显示名配置为“NOVA知识库”。
 
 Profile 使用 DSH 既有的 Cordis Patch 固定 Agent Preset：
 
@@ -29,6 +29,8 @@ dsh --profile nova-web
 ```
 
 启动时，Bundle 通过 `workspaceRegistry.create()` 注册或复用 `DSH_QA_WORKSPACE` 对应的唯一 Workspace；原生“新会话”自动使用它。`nova-qa` 的 `qa-tool-policy.root` 仍在 Preset YAML 中独立配置，模型只能看到该 Preset 注册的 `glob`、`grep` 和 `read`。这三个工具的目录完全由 Preset 决定，不从 Profile、Host 或 Session Workspace 推导。
+
+模型选择由 DSH Session 记录。Bundle 的 `agent-default-model` 只决定新 Session 的初始模型；已有 Session 不会因为重载 Bundle 自动改写，API 适配器需要通过 `session.selectModel` 显式切换。
 
 ## API 接入
 

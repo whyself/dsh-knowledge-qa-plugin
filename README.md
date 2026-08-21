@@ -12,6 +12,7 @@
 
 - 唯一 Workspace 显示为 `NOVA知识库`，启动时由 `DSH_QA_WORKSPACE` 指定资料目录。
 - 默认且锁定 `nova-qa`；通用 `knowledge-qa` 仍随包提供，便于二次开发。
+- 新 Session 默认使用 `deepseek-official / deepseek-v4-flash-vision-exp`，可接收文本与图片；已有 Session 保留日志中的模型，直到客户端显式切换。
 - 模型只获得 `glob`、`grep`、`read`，三个工具的根目录只由 Preset 的 `qa-tool-policy.config.root` 决定。
 - 权限表只有 `read-only`，Workspace、Preset 和权限选择入口均被移除。
 - 删除只适用于文件产出的 Web deliverables 提示词和展示。
@@ -22,7 +23,7 @@
 
 - Node.js `^22.19` 或 `>=24`
 - pnpm 11
-- `@deepseek-ai/dsh` `>=0.1.0-rc.5 <0.2.0`；发布验收使用 `0.1.0-rc.7`
+- `@deepseek-ai/dsh` `>=0.1.1-rc.1 <0.2.0`；发布验收使用 `0.1.1-rc.1`
 - 一个可读的 NOVA 资料目录
 
 ## 安装
@@ -30,13 +31,13 @@
 先安装 DSH：
 
 ```bash
-pnpm add --global @deepseek-ai/dsh@0.1.0-rc.7
+pnpm add --global @deepseek-ai/dsh@0.1.1-rc.1
 ```
 
 再把已发布的单包 Bundle 加入 `web` Profile：
 
 ```bash
-dsh plugin --profile web add https://github.com/whyself/dsh-knowledge-qa-plugin/releases/download/v0.1.1/dsh-knowledge-qa-bundle-0.1.1.tgz
+dsh plugin --profile web add https://github.com/whyself/dsh-knowledge-qa-plugin/releases/download/v0.2.0/dsh-knowledge-qa-bundle-0.2.0.tgz
 ```
 
 Bundle 自身已经固定 NOVA 默认值，不需要把仓库里的 Preset 或 Profile 文件复制到服务器。
@@ -84,10 +85,11 @@ dsh-knowledge-qa-plugin/
 | 资料 Workspace 路径 | `DSH_QA_WORKSPACE`，由 Bundle 的 `qa-workspace` 行读取 |
 | `glob` / `grep` / `read` 根目录 | 每个 Preset 的 `qa-tool-policy.config.root` |
 | 默认模式 | Bundle 的 `qa-agent-presets.config.default: nova-qa` |
+| 新 Session 默认模型 | Bundle 的 `agent-default-model`: `deepseek-official / deepseek-v4-flash-vision-exp` |
 | 权限 | Bundle 的单一 `read-only` 表 |
 | Session、消息与回答 | DSH 原生 Web RPC 和 Session 存储 |
 
-Workspace 不会推导或改写工具根。通过 API 创建 Session 时，请求也不应接受 Workspace、Preset、权限或工具路径覆盖。
+Workspace 不会推导或改写工具根。模型选择属于 DSH Session 状态，不属于 Agent Preset；Bundle 只提供新 Session 的默认值。通过 API 创建 Session 时，请求也不应接受 Workspace、Preset、权限或工具路径覆盖。
 
 ## 开发与发布验收
 
@@ -100,7 +102,7 @@ pnpm typecheck
 pnpm release:verify
 ```
 
-`release:verify` 会重新构建并打包，在临时目录从 npm 安装 `@deepseek-ai/dsh@0.1.0-rc.7`，通过真实 `dsh plugin` 安装 tarball，启动独立 Web 服务，再调用 `workspace.list`、`agentPreset.list`、`session.create` 和 `session.history`。成功后发布物位于 `.release/`。
+`release:verify` 会重新构建并打包，在临时目录从 npm 安装 `@deepseek-ai/dsh@0.1.1-rc.1`，通过真实 `dsh plugin` 安装 tarball，启动独立 Web 服务，再调用 `workspace.list`、`agentPreset.list`、`session.create` 和 `session.history`。成功后发布物位于 `.release/`。
 
 本地联调仍可使用路径安装：
 

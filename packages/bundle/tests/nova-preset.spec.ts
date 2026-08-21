@@ -35,6 +35,7 @@ const bundleManifest = JSON.parse(
   version?: string
   bundledDependencies?: string[]
   exports?: Record<string, unknown>
+  peerDependencies?: Record<string, string>
   repository?: { url?: string }
   dsh?: {
     bundle?: { agentPresets?: string }
@@ -43,10 +44,10 @@ const bundleManifest = JSON.parse(
 }
 const toolPolicyManifest = JSON.parse(
   readFileSync(fileURLToPath(new URL('../../tool-policy/package.json', import.meta.url)), 'utf8'),
-) as { version?: string, repository?: { url?: string } }
+) as { version?: string, repository?: { url?: string }, peerDependencies?: Record<string, string> }
 const uiManifest = JSON.parse(
   readFileSync(fileURLToPath(new URL('../../ui/package.json', import.meta.url)), 'utf8'),
-) as { version?: string, repository?: { url?: string } }
+) as { version?: string, repository?: { url?: string }, peerDependencies?: Record<string, string> }
 const bundlePatch = readFileSync(fileURLToPath(new URL('../cordis.patch.yml', import.meta.url)), 'utf8')
 const novaProfilePatch = readFileSync(
   fileURLToPath(new URL('../../../profiles/nova-web/cordis.patch.yml', import.meta.url)),
@@ -106,7 +107,7 @@ describe('nova-qa preset', () => {
   })
 
   it('ships one tagged release archive with package-owned Host, policy, and Client entries', () => {
-    expect(bundleManifest.version).toBe('0.1.1')
+    expect(bundleManifest.version).toBe('0.2.0')
     expect(toolPolicyManifest.version).toBe(bundleManifest.version)
     expect(uiManifest.version).toBe(bundleManifest.version)
     expect(bundleManifest.bundledDependencies).toBeUndefined()
@@ -116,6 +117,9 @@ describe('nova-qa preset', () => {
     expect(bundleManifest.dsh?.client?.inject).toContain('@deepseek-ai/dsh-client-runtime')
     for (const manifest of [bundleManifest, toolPolicyManifest, uiManifest]) {
       expect(manifest.repository?.url).toBe('https://github.com/whyself/dsh-knowledge-qa-plugin.git')
+      for (const [name, range] of Object.entries(manifest.peerDependencies ?? {})) {
+        if (name.startsWith('@deepseek-ai/dsh-')) expect(range).toBe('>=0.1.1-rc.1 <0.2.0')
+      }
     }
   })
 
@@ -124,6 +128,10 @@ describe('nova-qa preset', () => {
     expect(bundlePatch).toContain('root: !!js process.env.DSH_QA_WORKSPACE')
     expect(bundlePatch).toContain('title: NOVA知识库')
     expect(bundlePatch).toContain('default: nova-qa')
+    expect(bundlePatch).toContain(`- id: agent-default-model
+  config:
+    provider: deepseek-official
+    model: deepseek-v4-flash-vision-exp`)
     expect(bundlePatch).toContain(`- id: permission
   config:
     presets:
